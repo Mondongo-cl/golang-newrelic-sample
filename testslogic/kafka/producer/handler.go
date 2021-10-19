@@ -1,0 +1,99 @@
+package producer
+
+import (
+	"encoding/json"
+	"fmt"
+	"log"
+	"net/http"
+	"os"
+	"strconv"
+	"strings"
+)
+
+func init() {
+	brokers := getBrokersFromEnv()
+	partition := getPartitionFromEnv()
+	handler = NewProducer(brokers, partition)
+}
+
+func ProducerPostHandler(writer http.ResponseWriter, request *http.Request) {
+
+	if request.Method != "POST" {
+		log.Printf("Method %s not allowed", request.Method)
+		writer.WriteHeader(http.StatusMethodNotAllowed)
+		writer.Write([]byte("method not allowed"))
+		return
+	}
+
+	err := handler.Connect()
+	if err != nil {
+		writer.WriteHeader(http.StatusInternalServerError)
+		writer.Write([]byte(err.Error()))
+		return
+	}
+
+	defer handler.Disconnect()
+	var msg ProduceKafkaRequest
+	data := make([]byte, 0)
+	request.Body.Read(data)
+	err = json.Unmarshal(data, &msg)
+	if err != nil || msg.Topics == nil {
+		sample, _ := json.Marshal(&ProduceKafkaRequest{Topics: []string{"topic-1", "topic-2", "topic-nth"}, Data: map[string]string{"key": "value"}})
+		writer.WriteHeader(http.StatusBadRequest)
+		writer.Write([]byte(fmt.Sprintf("{\"message\":\"body format is not allowed error %v, use correct one:\":\"%v\"}", err, string(sample))))
+		return
+	}
+	topicsList := msg.Topics
+	createTopic(handler.Brokers, topicsList)
+	for i, t := range topicsList {
+		log.Printf("prossesing element number %v", i)
+		if msg.Data != nil {
+			data, err := json.Marshal(msg.Data)
+			if err != nil {
+				writer.WriteHeader(http.StatusInternalServerError)
+				writer.Write([]byte(fmt.Sprintf("\"message:\"\"Cant serialize payload error is :%v\"", err)))
+				return
+
+			}
+			err = handler.Produce(string(data), handler.Brokers, t)
+			if err != nil {
+				writer.WriteHeader(http.StatusInternalServerError)
+				writer.Write([]byte(fmt.Sprintf("{\"message\":\"%v\"}", err)))
+				return
+			}
+		} else {
+			writer.WriteHeader(http.StatusInternalServerError)
+			writer.Write([]byte("{\"message\":\"Kafka server is running & topics are created\"}"))
+			return
+		}
+	}
+
+	if err == nil {
+		writer.WriteHeader(http.StatusOK)
+		writer.Write([]byte("{\"message\":\"Kafka server is running\"}"))
+		return
+	}
+	writer.WriteHeader(http.StatusInternalServerError)
+	writer.Write([]byte(fmt.Sprintf("{\"message\":\"%v\"}", err)))
+}
+
+func getBrokersFromEnv() []string {
+	brokers := os.Getenv(KafkaHostConfigKey)
+	brokersList := strings.Split(brokers, ",")
+	return brokersList
+}
+
+func getTopicsFromEnv() []string {
+	topics := os.Getenv(KafkaTopicConfigKey)
+	brokersList := strings.Split(topics, ",")
+	return brokersList
+}
+
+func getPartitionFromEnv() int {
+	partition := os.Getenv(KafkaPartionConfigKey)
+	result, err := strconv.Atoi(partition)
+	if err != nil {
+		result = 0
+	}
+	return result
+}
