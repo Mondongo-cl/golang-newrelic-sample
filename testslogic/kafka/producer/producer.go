@@ -67,7 +67,7 @@ func getSyncProducer(brokers []string) (sarama.SyncProducer, error) {
 	return sarama.NewSyncProducer(brokers, config)
 }
 
-func (p *producer) Produce(message interface{}, brokers []string, topic string) error {
+func (p *producer) Produce(message interface{}, topic string) error {
 	if p.syncProducer != nil {
 		producer := p.syncProducer
 		out, err := json.Marshal(message)

@@ -17,6 +17,7 @@ func init() {
 }
 
 func ProducerPostHandler(writer http.ResponseWriter, request *http.Request) {
+	writer.Header().Add("content-type", "application/json")
 	if request.Method != "POST" {
 		log.Printf("Method %s not allowed", request.Method)
 		writer.WriteHeader(http.StatusMethodNotAllowed)
@@ -44,8 +45,8 @@ func ProducerPostHandler(writer http.ResponseWriter, request *http.Request) {
 	}
 	topicsList := msg.Topics
 	createTopic(handler.Brokers, topicsList)
-	for i, t := range topicsList {
-		log.Printf("prossesing element number %v", i)
+	for i, topicName := range topicsList {
+		log.Printf("prossesing element number %v - topic name %v", i, topicName)
 		if msg.Data != nil {
 			data, err := json.Marshal(msg.Data)
 			if err != nil {
@@ -54,7 +55,7 @@ func ProducerPostHandler(writer http.ResponseWriter, request *http.Request) {
 				return
 
 			}
-			err = handler.Produce(string(data), handler.Brokers, t)
+			err = handler.Produce(string(data), topicName)
 			if err != nil {
 				writer.WriteHeader(http.StatusInternalServerError)
 				writer.Write([]byte(fmt.Sprintf("{\"message\":\"%v\"}", err)))
@@ -62,14 +63,14 @@ func ProducerPostHandler(writer http.ResponseWriter, request *http.Request) {
 			}
 		} else {
 			writer.WriteHeader(http.StatusOK)
-			writer.Write([]byte("{\"message\":\"Kafka server is running & topics are created\"}"))
+			writer.Write([]byte("{\"message\":\"Kafka server is running, no topics was created\"}"))
 			return
 		}
 	}
 
 	if err == nil {
 		writer.WriteHeader(http.StatusOK)
-		writer.Write([]byte("{\"message\":\"Kafka server is running\"}"))
+		writer.Write([]byte(fmt.Sprintf("{\"message\":\"Kafka server is running the all topics are written %v\"}", topicsList)))
 		return
 	}
 	writer.WriteHeader(http.StatusInternalServerError)
