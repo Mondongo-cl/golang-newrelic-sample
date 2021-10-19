@@ -86,15 +86,6 @@ func getBrokersFromEnv() []string {
 	return brokersList
 }
 
-func getTopicsFromEnv() []string {
-	topics := os.Getenv(KafkaTopicConfigKey)
-	if topics == "" {
-		topics = "default"
-	}
-	brokersList := strings.Split(topics, ",")
-	return brokersList
-}
-
 func getPartitionFromEnv() int {
 	partition := os.Getenv(KafkaPartionConfigKey)
 	result, err := strconv.Atoi(partition)
