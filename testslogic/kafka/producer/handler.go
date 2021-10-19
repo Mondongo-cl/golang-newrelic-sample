@@ -17,7 +17,6 @@ func init() {
 }
 
 func ProducerPostHandler(writer http.ResponseWriter, request *http.Request) {
-
 	if request.Method != "POST" {
 		log.Printf("Method %s not allowed", request.Method)
 		writer.WriteHeader(http.StatusMethodNotAllowed)
@@ -34,7 +33,7 @@ func ProducerPostHandler(writer http.ResponseWriter, request *http.Request) {
 
 	defer handler.Disconnect()
 	var msg ProduceKafkaRequest
-	data := make([]byte, 0)
+	data := make([]byte, request.ContentLength)
 	request.Body.Read(data)
 	err = json.Unmarshal(data, &msg)
 	if err != nil || msg.Topics == nil {
@@ -62,7 +61,7 @@ func ProducerPostHandler(writer http.ResponseWriter, request *http.Request) {
 				return
 			}
 		} else {
-			writer.WriteHeader(http.StatusInternalServerError)
+			writer.WriteHeader(http.StatusOK)
 			writer.Write([]byte("{\"message\":\"Kafka server is running & topics are created\"}"))
 			return
 		}
@@ -79,12 +78,18 @@ func ProducerPostHandler(writer http.ResponseWriter, request *http.Request) {
 
 func getBrokersFromEnv() []string {
 	brokers := os.Getenv(KafkaHostConfigKey)
+	if brokers == "" {
+		brokers = "localhost:9092"
+	}
 	brokersList := strings.Split(brokers, ",")
 	return brokersList
 }
 
 func getTopicsFromEnv() []string {
 	topics := os.Getenv(KafkaTopicConfigKey)
+	if topics == "" {
+		topics = "default"
+	}
 	brokersList := strings.Split(topics, ",")
 	return brokersList
 }
