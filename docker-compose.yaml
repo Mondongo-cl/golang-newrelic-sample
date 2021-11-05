@@ -1,0 +1,44 @@
+version: '3.8'
+services:
+  mysql-heathcheck:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    deploy:
+      restart_policy:
+        condition: on-failure
+    networks:
+      network:
+        ipv4_address: 172.28.1.3
+    ports:
+      - '3000:3000'
+    environment:
+      - NEWRELIC_LICENCE=7a39ccf3e6bdf7217922b5c422d18285FFFFNRAL
+      - MYSQL_USERNAME=root
+      - MYSQL_PASSWORD=password!
+      - MYSQL_HOST=mysql
+      - MYSQL_DATABASE=root
+    depends_on:
+      - mysql
+  mysql:
+    image: 'mysql:5.7'
+    deploy:
+      restart_policy:
+        condition: on-failure
+    environment:
+      MYSQL_ROOT_PASSWORD: 'password!'
+    command: --init-file /mysqldb/customersdb_customers.sql
+    volumes:
+      - ./mysqldb:/mysqldb/
+    networks:
+      network:
+        ipv4_address: 172.28.1.2
+    ports:
+      - '3306:3306'
+
+networks:
+  network:
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.28.0.0/16
