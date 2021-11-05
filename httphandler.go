@@ -21,6 +21,7 @@ func Handle(c echo.Context) error {
 	stmt := db.Select("*").From("customers").Limit(1000).Offset(0)
 	rawQuery, params, err := stmt.ToSQL()
 
+	log.Printf("starting query:\n%v", rawQuery)
 	if err == nil {
 		rows, err := db.QueryContext(ctx, rawQuery, params...)
 		if err == nil {
@@ -38,6 +39,7 @@ func Handle(c echo.Context) error {
 	if err != nil {
 		return newInternalServerError(c, err)
 	}
+	log.Print("End Query Execution")
 	nrtx.End()
 	ctx.Done()
 	return c.JSON(200, result)
