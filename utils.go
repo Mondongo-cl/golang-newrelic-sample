@@ -1,14 +1,15 @@
 package main
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 
-	"github.com/jmoiron/sqlx"
-	_ "github.com/newrelic/go-agent/v3/integrations/nrmysql"
-
 	"github.com/doug-martin/goqu/v9"
+	_ "github.com/doug-martin/goqu/v9/dialect/mysql"
+	"github.com/jmoiron/sqlx"
 	"github.com/labstack/echo/v4"
+	_ "github.com/newrelic/go-agent/v3/integrations/nrmysql"
 )
 
 func (c Configuration) Parse() (string, error) {
@@ -30,7 +31,7 @@ func (c Configuration) Parse() (string, error) {
 	return cnnstr, nil
 }
 
-func prepareConnection(c echo.Context) (*goqu.TxDatabase, error) {
+func prepareConnection(c echo.Context, ctx context.Context) (*goqu.TxDatabase, error) {
 	connectionstring, err := cfg.Parse()
 
 	if err != nil {
@@ -54,5 +55,5 @@ func prepareConnection(c echo.Context) (*goqu.TxDatabase, error) {
 }
 
 func newInternalServerError(c echo.Context, err error) error {
-	return c.JSON(500, err)
+	return c.JSON(500, err.Error())
 }

@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"errors"
 	"log"
 	"net/http"
@@ -22,7 +21,6 @@ const (
 
 var (
 	cfg                    Configuration
-	ctx                    context.Context
 	app                    *newrelic.Application
 	errUserNameNotFound    error = errors.New("username is required")
 	errInvalidPortNumber   error = errors.New("port number must be greather than 0")
@@ -40,6 +38,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("INIT:: New Relics initialization fails, message %s\n", err.Error())
 	}
+
 	app.WaitForConnection(5 * time.Second)
 
 	port, err := strconv.Atoi(os.Getenv("MYSQL_PORT"))

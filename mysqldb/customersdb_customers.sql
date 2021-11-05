@@ -2,7 +2,7 @@
 GRANT ALL ON *.* to 'root'@'%' IDENTIFIED BY 'password!';
 FLUSH PRIVILEGES;
 DROP DATABASE IF EXISTS `customer`;
-CREATE DATABASE `customer` /*!40100 DEFAULT CHARACTER SET latin1 */;
+CREATE DATABASE `customer` 
 USE customer;
 DROP TABLE IF EXISTS `customers`;
 CREATE TABLE `customers` (
