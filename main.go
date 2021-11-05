@@ -59,5 +59,5 @@ func main() {
 	if err != http.ErrServerClosed {
 		log.Fatal(err)
 	}
-
+	app.Shutdown(5 * time.Second)
 }

@@ -47,7 +47,10 @@ func prepareConnection(c echo.Context, ctx context.Context) (*goqu.TxDatabase, e
 		return nil, newInternalServerError(c, err)
 	}
 	db := goqu.New(DatabaseDialect, cnn)
-	tx, err := db.BeginTx(ctx, &sql.TxOptions{})
+	tx, err := db.BeginTx(ctx, &sql.TxOptions{
+		Isolation: sql.LevelReadCommitted,
+		ReadOnly:  true,
+	})
 	if err != nil {
 		return nil, newInternalServerError(c, err)
 	}
