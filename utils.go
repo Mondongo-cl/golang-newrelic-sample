@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"time"
 
 	"github.com/doug-martin/goqu/v9"
 	_ "github.com/doug-martin/goqu/v9/dialect/mysql"
@@ -31,20 +32,23 @@ func (c Configuration) Parse() (string, error) {
 	return cnnstr, nil
 }
 
-func prepareConnection(c echo.Context, ctx context.Context) (*goqu.TxDatabase, error) {
+func prepareConnection(c echo.Context, ctx context.Context) (*goqu.TxDatabase, *sqlx.DB, error) {
 	connectionstring, err := cfg.Parse()
 
 	if err != nil {
-		return nil, newInternalServerError(c, err)
+		return nil, nil, newInternalServerError(c, err)
 	}
 
 	cnn, err := sqlx.Open(DatabaseDriver, connectionstring)
 	if err != nil {
-		return nil, newInternalServerError(c, err)
+		return nil, nil, newInternalServerError(c, err)
 	}
+	cnn.SetConnMaxLifetime(time.Minute * 3)
+	cnn.SetMaxOpenConns(10)
+	cnn.SetMaxIdleConns(10)
 	err = cnn.Ping()
 	if err != nil {
-		return nil, newInternalServerError(c, err)
+		return nil, nil, newInternalServerError(c, err)
 	}
 	db := goqu.New(DatabaseDialect, cnn)
 	tx, err := db.BeginTx(ctx, &sql.TxOptions{
@@ -52,11 +56,13 @@ func prepareConnection(c echo.Context, ctx context.Context) (*goqu.TxDatabase, e
 		ReadOnly:  true,
 	})
 	if err != nil {
-		return nil, newInternalServerError(c, err)
+		return nil, nil, newInternalServerError(c, err)
 	}
-	return tx, nil
+
+	return tx, cnn, nil
 }
 
 func newInternalServerError(c echo.Context, err error) error {
-	return c.JSON(500, err.Error())
+	response := c.JSON(500, err.Error())
+	return response
 }

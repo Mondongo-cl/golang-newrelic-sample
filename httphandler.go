@@ -2,8 +2,8 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"log"
-	"time"
 
 	"github.com/labstack/echo/v4"
 	"github.com/newrelic/go-agent/v3/newrelic"
@@ -14,33 +14,20 @@ func Handle(c echo.Context) error {
 	nrtx := app.StartTransaction("Get Customers")
 	ctx := newrelic.NewContext(context.Background(), nrtx)
 
-	db, err := prepareConnection(c, ctx)
+	tx, db, err := prepareConnection(c, ctx)
 	if err != nil {
 		return err
 	}
-	stmt := db.Select("*").From("customers").Limit(1000).Offset(0)
-	rawQuery, params, err := stmt.ToSQL()
-
-	log.Printf("starting query:\n%v", rawQuery)
-	if err == nil {
-		rows, err := db.QueryContext(ctx, rawQuery, params...)
-		if err == nil {
-			for rows.Next() {
-				cols, _ := rows.Columns()
-				for i, v := range cols {
-					log.Printf("Key:%v ; Value:%v", i, v)
-				}
-				app.WaitForConnection(5 * time.Second)
-			}
-		}
-	}
+	stmt := tx.Select("*").From("customers").Limit(1000).Offset(0)
+	rawQuery, params, _ := stmt.ToSQL()
+	p, _ := json.Marshal(params)
+	log.Printf("starting query:\n%v params %v", rawQuery, string(p))
 	result := make([]Customer, 0)
 	err = stmt.ScanStructsContext(ctx, &result)
 	if err != nil {
 		return newInternalServerError(c, err)
 	}
 	log.Print("End Query Execution")
-	nrtx.End()
-	ctx.Done()
+	db.Close()
 	return c.JSON(200, result)
 }

@@ -11,13 +11,13 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/labstack/echo/v4"
 	nrecho "github.com/newrelic/go-agent/v3/integrations/nrecho-v4"
-	_ "github.com/newrelic/go-agent/v3/integrations/nrmysql"
+
 	"github.com/newrelic/go-agent/v3/newrelic"
 )
 
 const (
 	DatabaseDialect = "mysql"
-	DatabaseDriver  = "nrmysql"
+	DatabaseDriver  = "mysql"
 )
 
 var (
