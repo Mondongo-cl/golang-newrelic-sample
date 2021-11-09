@@ -63,6 +63,6 @@ func prepareConnection(c echo.Context, ctx context.Context) (*goqu.TxDatabase, *
 }
 
 func newInternalServerError(c echo.Context, err error) error {
-	response := c.JSON(500, err.Error())
-	return response
+	c.JSON(500, err.Error())
+	return err
 }
