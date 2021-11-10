@@ -47,6 +47,7 @@ github.com/mattn/go-isatty v0.0.14/go.mod h1:7GGIvUiUoEMVVmxf/4nioHXj79iQHKdU27k
 github.com/mattn/go-sqlite3 v1.14.6/go.mod h1:NyWgC/yNuGj7Q9rpYnZvas74GogHl5/Z4A/KQRfk6bU=
 github.com/mattn/go-sqlite3 v1.14.7 h1:fxWBnXkxfM6sRiuH3bqJ4CfzZojMOLVc0UTsTglEghA=
 github.com/mattn/go-sqlite3 v1.14.7/go.mod h1:NyWgC/yNuGj7Q9rpYnZvas74GogHl5/Z4A/KQRfk6bU=
+github.com/newrelic/go-agent/v3 v3.0.0/go.mod h1:H28zDNUC0U/b7kLoY4EFOhuth10Xu/9dchozUiOseQQ=
 github.com/newrelic/go-agent/v3 v3.3.0/go.mod h1:H28zDNUC0U/b7kLoY4EFOhuth10Xu/9dchozUiOseQQ=
 github.com/newrelic/go-agent/v3 v3.15.0/go.mod h1:1A1dssWBwzB7UemzRU6ZVaGDsI+cEn5/bNxI0wiYlIc=
 github.com/newrelic/go-agent/v3 v3.15.1 h1:0N1K7fTjRty69VHUHvz7fA3bApLUs2MjzsYM4GWHYL4=
@@ -55,6 +56,10 @@ github.com/newrelic/go-agent/v3/integrations/nrecho-v4 v1.0.2 h1:+tLUq3Fn8emBECH
 github.com/newrelic/go-agent/v3/integrations/nrecho-v4 v1.0.2/go.mod h1:M2pFf3THaBeWphQNpQlLScCOlgHRFugK+W9aiN22oYI=
 github.com/newrelic/go-agent/v3/integrations/nrmysql v1.2.1 h1:uSf2B922fT7TVDA6fgLKybF0tkYFI1JihLfLOGN5SQQ=
 github.com/newrelic/go-agent/v3/integrations/nrmysql v1.2.1/go.mod h1:JNzxsD3gL+G93ZkpvEC3+5AMh9Zo+xVrIiadUbXVdUc=
+github.com/newrelic/go-agent/v3/integrations/nrpkgerrors v1.0.1 h1:HR+riJMMoe9BJKqOux+67sGQJk4XzzwQ9xwcFRSuhu4=
+github.com/newrelic/go-agent/v3/integrations/nrpkgerrors v1.0.1/go.mod h1:yXUqcAzlKNVIsSyoaI2ILdpvBeMCz3Ko/ASl4Vbg2i4=
+github.com/pkg/errors v0.8.0 h1:WdK/asTD0HN+q6hsWO3/vpuAkAr+tw6aNJNDFFf0+qw=
+github.com/pkg/errors v0.8.0/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/prometheus/client_model v0.0.0-20190812154241-14fe0d1b01d4/go.mod h1:xMI15A0UPsDsEKsMN9yxemIoYk6Tm2C1GtYGdfGttqA=

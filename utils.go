@@ -11,6 +11,7 @@ import (
 	"github.com/jmoiron/sqlx"
 	"github.com/labstack/echo/v4"
 	_ "github.com/newrelic/go-agent/v3/integrations/nrmysql"
+	"github.com/newrelic/go-agent/v3/integrations/nrpkgerrors"
 )
 
 func (c Configuration) Parse() (string, error) {
@@ -63,6 +64,7 @@ func prepareConnection(c echo.Context, ctx context.Context) (*goqu.TxDatabase, *
 }
 
 func newInternalServerError(c echo.Context, err error) error {
+	err = nrpkgerrors.Wrap(err)
 	c.JSON(500, err.Error())
 	return err
 }

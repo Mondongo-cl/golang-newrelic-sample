@@ -10,5 +10,6 @@ require (
 	github.com/newrelic/go-agent/v3 v3.15.1
 	github.com/newrelic/go-agent/v3/integrations/nrecho-v4 v1.0.2
 	github.com/newrelic/go-agent/v3/integrations/nrmysql v1.2.1
+	github.com/newrelic/go-agent/v3/integrations/nrpkgerrors v1.0.1
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
 )

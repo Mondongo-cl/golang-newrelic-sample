@@ -8,16 +8,18 @@ import (
 	"strconv"
 	"time"
 
-	_ "github.com/go-sql-driver/mysql"
+	//_ "github.com/go-sql-driver/mysql"
 	"github.com/labstack/echo/v4"
 	nrecho "github.com/newrelic/go-agent/v3/integrations/nrecho-v4"
+	_ "github.com/newrelic/go-agent/v3/integrations/nrmysql"
+	"github.com/newrelic/go-agent/v3/integrations/nrpkgerrors"
 
 	"github.com/newrelic/go-agent/v3/newrelic"
 )
 
 const (
 	DatabaseDialect = "mysql"
-	DatabaseDriver  = "mysql"
+	DatabaseDriver  = "nrmysql"
 )
 
 var (
@@ -37,6 +39,7 @@ func main() {
 		newrelic.ConfigDebugLogger(os.Stdout),
 	)
 	if err != nil {
+		err = nrpkgerrors.Wrap(err)
 		log.Fatalf("INIT:: New Relics initialization fails, message %s\n", err.Error())
 	}
 
