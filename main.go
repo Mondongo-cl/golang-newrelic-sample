@@ -13,7 +13,6 @@ import (
 	nrecho "github.com/newrelic/go-agent/v3/integrations/nrecho-v4"
 	_ "github.com/newrelic/go-agent/v3/integrations/nrmysql"
 	"github.com/newrelic/go-agent/v3/integrations/nrpkgerrors"
-
 	"github.com/newrelic/go-agent/v3/newrelic"
 )
 
@@ -24,7 +23,6 @@ const (
 
 var (
 	cfg                    Configuration
-	app                    *newrelic.Application
 	errUserNameNotFound    error = errors.New("username is required")
 	errInvalidPortNumber   error = errors.New("port number must be greather than 0")
 	errInvalidHostName     error = errors.New("hostname can not be empty")
