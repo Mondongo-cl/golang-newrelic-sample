@@ -13,7 +13,7 @@ services:
     ports:
       - '3000:3000'
     environment:
-      - NEWRELIC_LICENCE=7a39ccf3e6bdf7217922b5c422d18285FFFFNRAL
+      - NEWRELIC_LICENCE=
       - MYSQL_USERNAME=root
       - MYSQL_PASSWORD=password!
       - MYSQL_HOST=mysql
